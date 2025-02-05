@@ -1,11 +1,11 @@
 import { OrbitControls } from "@react-three/drei";
 import { Canvas } from "@react-three/fiber";
-import Plane from "./components/Plane";
+import Paddle from "./components/Paddle";
 
 export default function App() {
   return (
     <Canvas style={{ background: "black" }}>
-      <Plane />
+      <Paddle />
       <OrbitControls />
     </Canvas>
   );
