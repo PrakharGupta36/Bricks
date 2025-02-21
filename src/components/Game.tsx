@@ -5,13 +5,22 @@ import CountDown from "../utils/CountDown";
 import useStore from "../utils/State";
 import Bricks from "./Bricks";
 import Boundary from "./Boundary";
+import { Html } from "@react-three/drei";
 
 export default function Game() {
-  const { countDown } = useStore();
+  const { countDown, hitBricks } = useStore();
 
   return (
     <>
-      {countDown && <CountDown />}
+      {countDown ? (
+        <CountDown />
+      ) : (
+        <Html>
+          <div className='score'>
+            <p> Score: {hitBricks.length} </p>
+          </div>
+        </Html>
+      )}
       <Physics gravity={[0, -9.8, 0]}>
         <Bricks />
         <Ball />

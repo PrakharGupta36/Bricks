@@ -1,4 +1,3 @@
-import { OrbitControls } from "@react-three/drei";
 import { RigidBody } from "@react-three/rapier";
 import * as THREE from "three";
 
@@ -7,13 +6,64 @@ export default function Boundary() {
     position,
     rotation,
     scale,
+    bottom,
+    side,
+    frontBack,
   }: {
     position: [number, number, number];
     rotation: [number, number, number];
     scale: [number, number];
+    bottom?: boolean;
+    side?: boolean; // Left or Right walls
+    frontBack?: boolean; // Front or Back walls
   }) {
     return (
-      <RigidBody type='fixed'>
+      <RigidBody
+        type='fixed'
+        onCollisionEnter={({ target }) => {
+          if (!target) return;
+          const ballRigidBody = target.rigidBody;
+          if (!ballRigidBody) return;
+
+          // Get current velocity
+          const currentVelocity = ballRigidBody.linvel();
+          const speed = Math.sqrt(
+            currentVelocity.x ** 2 +
+              currentVelocity.y ** 4 +
+              currentVelocity.z ** 2
+          ); // Calculate speed
+
+          const newVelocity = new THREE.Vector3(
+            currentVelocity.x,
+            currentVelocity.y,
+            currentVelocity.z
+          );
+
+          if (bottom) {
+            // Uncomment this to reset the game when the ball falls
+            window.location.reload();
+            return;
+          }
+
+          if (side) {
+            // Reflect X direction (Left & Right walls)
+            newVelocity.x *= -1;
+          } else if (frontBack) {
+            // Reflect Z direction (Front & Back walls)
+            newVelocity.z *= -1;
+          } else {
+            // Reflect Y direction (Top & Bottom walls)
+            newVelocity.y *= -1;
+          }
+
+          // Normalize and maintain speed
+          newVelocity.normalize().multiplyScalar(speed);
+
+          // Apply new velocity
+          ballRigidBody.setLinvel(newVelocity, true);
+        }}
+        restitution={1} // Ensures perfect bounce
+      >
         <mesh position={position} rotation={rotation}>
           <planeGeometry args={[scale[0], scale[1]]} />
           <meshBasicMaterial wireframe side={THREE.DoubleSide} />
@@ -28,39 +78,38 @@ export default function Boundary() {
         position={[0, -3.11, 0]}
         rotation={[-Math.PI / 2, 0, 0]}
         scale={[10, 10]}
-        // Bottom
+        bottom={true} // Bottom (Can be used for game over)
       />
       <Wall
         position={[5, 0.37, 0]}
         rotation={[0, -Math.PI / 2, 0]}
         scale={[10, 7]}
-        // Right
+        side={true} // Right (Reflects X direction)
       />
       <Wall
         position={[-5, 0.37, 0]}
         rotation={[0, -Math.PI / 2, 0]}
         scale={[10, 7]}
-        // Left
+        side={true} // Left (Reflects X direction)
       />
       <Wall
         position={[0, 3.85, 0]}
         rotation={[-Math.PI / 2, 0, 0]}
         scale={[10, 10]}
-        // Top
+        // Top (Reflects Y direction)
       />
       <Wall
         position={[0, 0.37, 5]}
         rotation={[0, 0, -Math.PI / 2]}
         scale={[7, 10]}
-        // Front
+        frontBack={true} // Front (Reflects Z direction)
       />
       <Wall
         position={[0, 0.37, -5]}
         rotation={[0, 0, -Math.PI / 2]}
         scale={[7, 10]}
-        // Back
+        frontBack={true} // Back (Reflects Z direction)
       />
-      <OrbitControls />
     </>
   );
 }

@@ -1,25 +1,34 @@
+import { useEffect } from "react";
 import { create } from "zustand";
 
-type BrickObject = {
+// Type Definitions
+export type BrickObject = {
   id: number;
   position: [number, number, number];
 };
 
-interface useStoreTypes {
+interface UseStoreTypes {
   start: boolean;
   countDown: number;
   setStart: () => void;
   setCountDown: (updater: number | ((prev: number) => number)) => void;
 
   bricks: BrickObject[];
-  setBricks: (bricks: BrickObject[]) => void;
+  setBricks: (
+    updater: BrickObject[] | ((prev: BrickObject[]) => BrickObject[])
+  ) => void;
+
+  hitBricks: BrickObject[];
   handleCollision: (brickId: number) => void;
 
-  canvasRef: { current: HTMLCanvasElement | null }; // ✅ Store canvasRef as an object
-  setCanvasRef: (ref: HTMLCanvasElement | null) => void; // ✅ Setter function
+  canvasRef: { current: HTMLCanvasElement | null };
+  setCanvasRef: (ref: HTMLCanvasElement | null) => void;
+
+  mousePosition: { x: number; y: number };
+  setMousePosition: (x: number, y: number) => void;
 }
 
-const useStore = create<useStoreTypes>((set) => ({
+const useStore = create<UseStoreTypes>((set) => ({
   start: false,
   countDown: 3,
   setStart: () => set({ start: true }),
@@ -30,16 +39,44 @@ const useStore = create<useStoreTypes>((set) => ({
     })),
 
   bricks: [],
-  setBricks: (bricks: BrickObject[]) => set(() => ({ bricks: bricks })),
-
-  handleCollision: (brickId: number) =>
+  setBricks: (updater) =>
     set((state) => ({
-      bricks: state.bricks.filter((brick) => brick.id !== brickId),
+      bricks: typeof updater === "function" ? updater(state.bricks) : updater,
     })),
 
-  canvasRef: { current: null }, // ✅ Initialize as an object
+  hitBricks: [],
+  handleCollision: (brickId) =>
+    set((state) => {
+      const hitBrick = state.bricks.find((brick) => brick.id === brickId);
+      if (!hitBrick) return {};
+
+      return {
+        bricks: state.bricks.filter((brick) => brick.id !== brickId),
+        hitBricks: [...state.hitBricks, hitBrick],
+      };
+    }),
+
+  canvasRef: { current: null },
   setCanvasRef: (ref) =>
-    set((state) => ({ canvasRef: { ...state.canvasRef, current: ref } })), // ✅ Update ref properly
+    set((state) => ({ canvasRef: { ...state.canvasRef, current: ref } })),
+
+  mousePosition: { x: 0, y: 0 },
+  setMousePosition: (x, y) => set(() => ({ mousePosition: { x, y } })),
 }));
+
+// Mouse Tracker Hook
+export function useMouseTracker() {
+  const setMousePosition = useStore((state) => state.setMousePosition);
+
+  useEffect(() => {
+    const handleMouseMove = (e: MouseEvent) => {
+      const x = ((e.clientX - window.innerWidth / 2) / window.innerWidth) * 8;
+      setMousePosition(x, 0);
+    };
+
+    window.addEventListener("mousemove", handleMouseMove);
+    return () => window.removeEventListener("mousemove", handleMouseMove);
+  }, [setMousePosition]);
+}
 
 export default useStore;
