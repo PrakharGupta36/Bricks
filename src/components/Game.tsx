@@ -8,16 +8,23 @@ import Boundary from "./Boundary";
 import { Html } from "@react-three/drei";
 
 export default function Game() {
-  const { countDown, hitBricks } = useStore();
+  const { countDown, hitBricks, bricks } = useStore();
 
   return (
     <>
       {countDown ? (
         <CountDown />
       ) : (
-        <Html>
+        <Html center position={[0, -4.1, 0]}>
           <div className='score'>
-            <p> Score: {hitBricks.length} </p>
+            <p className='text'>
+              <span> Score:</span> <span> {hitBricks.length}</span>
+            </p>
+            <hr />
+            <p className='text'>
+              <span> Rows: </span>{" "}
+              <span> {(bricks.length + hitBricks.length) / 5} </span>
+            </p>
           </div>
         </Html>
       )}

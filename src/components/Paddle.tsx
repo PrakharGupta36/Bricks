@@ -32,8 +32,8 @@ export default function Paddle() {
         // Determine impulse direction based on mouse position
         const impulseX =
           mousePosition.x > 0
-            ? -0.15 // Move left when x > 0
-            : 0.15; // Move right when x < 0
+            ? -0.5 // Move left when x > 0
+            : 0.5; // Move right when x < 0
 
         const randomImpulse = new THREE.Vector3(impulseX, 0, 0);
         ballRigidBody.applyImpulse(randomImpulse, true);

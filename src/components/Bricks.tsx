@@ -3,7 +3,6 @@ import useStore from "../utils/State";
 import { useEffect, useRef } from "react";
 import * as THREE from "three";
 import { useFrame } from "@react-three/fiber";
-// import { Html } from "@react-three/drei";
 
 type BrickObject = {
   id: number;
@@ -11,12 +10,7 @@ type BrickObject = {
 };
 
 export default function Bricks() {
-  const {
-    bricks,
-    setBricks,
-    // hitBricks,
-    handleCollision,
-  } = useStore();
+  const { bricks, setBricks, handleCollision } = useStore();
 
   const height = 3;
 
@@ -151,54 +145,53 @@ export default function Bricks() {
 
   return (
     <>
-      {/* <Html position={[1, 0, 0]}>
-        <div className='score'>
-          <p> Rows: {(bricks.length + hitBricks.length) / 5} </p>
-        </div>
-      </Html> */}
-      {bricks.map((brick) => {
-        return (
-          <RigidBody
-            key={brick.id}
-            colliders='cuboid'
-            type='fixed'
-            restitution={1.5}
-            name={`brick-${brick.id}`}
-            onContactForce={(e) => {
-              const ballRigidBody = e.rigidBody;
-              if (!ballRigidBody) return;
+      {bricks.length ? (
+        bricks.map((brick) => {
+          return (
+            <RigidBody
+              key={brick.id}
+              colliders='cuboid'
+              type='fixed'
+              restitution={1.5}
+              name={`brick-${brick.id}`}
+              onContactForce={(e) => {
+                const ballRigidBody = e.rigidBody;
+                if (!ballRigidBody) return;
 
-              // Slow down the ball by reducing its velocity
-              const currentVelocity = ballRigidBody.linvel(); // Get current velocity
-              const slowFactor = 0.1; // Adjust this to control how much it slows down
+                // Slow down the ball by reducing its velocity
+                const currentVelocity = ballRigidBody.linvel(); // Get current velocity
+                const slowFactor = 0.1; // Adjust this to control how much it slows down
 
-              const newVelocity = new THREE.Vector3(
-                currentVelocity.x * slowFactor,
-                currentVelocity.y * slowFactor,
-                currentVelocity.z * slowFactor
-              );
+                const newVelocity = new THREE.Vector3(
+                  currentVelocity.x * slowFactor,
+                  currentVelocity.y * slowFactor,
+                  currentVelocity.z * slowFactor
+                );
 
-              ballRigidBody.setLinvel(newVelocity, true);
+                ballRigidBody.setLinvel(newVelocity, true);
 
-              // Apply a small impulse to bricks
-              const randomImpulse = new THREE.Vector3(
-                (Math.random() - 0.5) * 0.6,
-                0,
-                0
-              );
+                // Apply a small impulse to bricks
+                const randomImpulse = new THREE.Vector3(
+                  (Math.random() - 0.5) * 0.6,
+                  0,
+                  0
+                );
 
-              ballRigidBody.applyImpulse(randomImpulse, true);
+                ballRigidBody.applyImpulse(randomImpulse, true);
 
-              handleCollision(brick.id);
-            }}
-          >
-            <mesh position={brick.position}>
-              <boxGeometry args={[1.75, 0.2, 0.3]} />
-              <meshNormalMaterial />
-            </mesh>
-          </RigidBody>
-        );
-      })}
+                handleCollision(brick.id);
+              }}
+            >
+              <mesh position={brick.position}>
+                <boxGeometry args={[1.75, 0.2, 0.3]} />
+                <meshNormalMaterial />
+              </mesh>
+            </RigidBody>
+          );
+        })
+      ) : (
+        <> </>
+      )}
     </>
   );
 }

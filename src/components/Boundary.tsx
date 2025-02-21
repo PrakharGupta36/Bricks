@@ -8,14 +8,12 @@ export default function Boundary() {
     scale,
     bottom,
     side,
-    frontBack,
   }: {
     position: [number, number, number];
     rotation: [number, number, number];
     scale: [number, number];
     bottom?: boolean;
     side?: boolean; // Left or Right walls
-    frontBack?: boolean; // Front or Back walls
   }) {
     return (
       <RigidBody
@@ -28,9 +26,9 @@ export default function Boundary() {
           // Get current velocity
           const currentVelocity = ballRigidBody.linvel();
           const speed = Math.sqrt(
-            currentVelocity.x ** 2 +
-              currentVelocity.y ** 4 +
-              currentVelocity.z ** 2
+            currentVelocity.x ** 0.5 +
+              currentVelocity.y ** 8 +
+              currentVelocity.z ** 0.5
           ); // Calculate speed
 
           const newVelocity = new THREE.Vector3(
@@ -41,19 +39,16 @@ export default function Boundary() {
 
           if (bottom) {
             // Uncomment this to reset the game when the ball falls
+            // setTimeout(() => {
             window.location.reload();
+            // }, 1000);
+
             return;
           }
 
           if (side) {
             // Reflect X direction (Left & Right walls)
             newVelocity.x *= -1;
-          } else if (frontBack) {
-            // Reflect Z direction (Front & Back walls)
-            newVelocity.z *= -1;
-          } else {
-            // Reflect Y direction (Top & Bottom walls)
-            newVelocity.y *= -1;
           }
 
           // Normalize and maintain speed
@@ -102,13 +97,11 @@ export default function Boundary() {
         position={[0, 0.37, 5]}
         rotation={[0, 0, -Math.PI / 2]}
         scale={[7, 10]}
-        frontBack={true} // Front (Reflects Z direction)
       />
       <Wall
         position={[0, 0.37, -5]}
         rotation={[0, 0, -Math.PI / 2]}
         scale={[7, 10]}
-        frontBack={true} // Back (Reflects Z direction)
       />
     </>
   );
