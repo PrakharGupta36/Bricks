@@ -29,6 +29,9 @@ interface UseStoreTypes {
 
   time: number;
   setTime: (updater: number | ((prev: number) => number)) => void;
+
+  actualTime: number;
+  setActualTime: (updater: number | ((prev: number) => number)) => void;
 }
 
 const useStore = create<UseStoreTypes>((set) => ({
@@ -71,6 +74,13 @@ const useStore = create<UseStoreTypes>((set) => ({
     set((state) => ({
       time: typeof updater === "function" ? updater(state.time) : updater,
     })),
+
+  actualTime: 40,
+
+  setActualTime: (updater) =>
+    set((state) => ({
+      time: typeof updater === "function" ? updater(state.time) : updater,
+    })),
 }));
 
 export function useMouseTracker() {
@@ -86,6 +96,5 @@ export function useMouseTracker() {
     return () => window.removeEventListener("mousemove", handleMouseMove);
   }, [setMousePosition]);
 }
-
 
 export default useStore;

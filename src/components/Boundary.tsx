@@ -1,5 +1,6 @@
 import { RigidBody } from "@react-three/rapier";
 import * as THREE from "three";
+import useStore from "../utils/State";
 
 export default function Boundary() {
   function Wall({
@@ -15,6 +16,8 @@ export default function Boundary() {
     bottom?: boolean;
     side?: boolean; // Left or Right walls
   }) {
+    const { setTime } = useStore();
+
     return (
       <RigidBody
         type='fixed'
@@ -38,12 +41,7 @@ export default function Boundary() {
           );
 
           if (bottom) {
-            // Uncomment this to reset the game when the ball falls
-            // setTimeout(() => {
-            window.location.reload();
-            // }, 1000);
-
-            return;
+            setTime(0);
           }
 
           if (side) {

@@ -9,9 +9,24 @@ import UI from "./UI";
 import { Html } from "@react-three/drei";
 import Confetti from "react-confetti";
 import { useWindowSize } from "react-use";
+import { useEffect, useRef } from "react";
 
 export default function Game() {
-  const { time, countDown } = useStore();
+  const { time, countDown, setActualTime } = useStore();
+
+  const intervalRef = useRef<NodeJS.Timeout | null>(null);
+
+  useEffect(() => {
+    if (!countDown) {
+      intervalRef.current = setInterval(() => {
+        setActualTime((prevTime) => Math.max(0, prevTime - 1)); // Prevent time from going below 0
+      }, 1000);
+
+      return () => {
+        if (intervalRef.current) clearInterval(intervalRef.current);
+      };
+    }
+  }, [countDown, setActualTime]); // Depend only on `setTime` to avoid unnecessary re-renders
 
   return (
     <>
@@ -33,7 +48,7 @@ export default function Game() {
 }
 
 function GameOver() {
-  const { setStart, hitBricks } = useStore();
+  const { hitBricks,actualTime } = useStore();
   const { width, height } = useWindowSize();
 
   return (
@@ -48,10 +63,11 @@ function GameOver() {
         <p>
           Congratrulations, your score was {hitBricks.length}
           <span>
-            and also you have wasted 40 seconds of your life in this game
+            and also you have wasted {40 - actualTime} seconds of your life in
+            this game
           </span>
         </p>
-        <button className='start_btn' onClick={() => setStart()}>
+        <button className='start_btn' onClick={() => window.location.reload()}>
           Play Again
         </button>
 

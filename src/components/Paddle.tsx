@@ -40,7 +40,7 @@ export default function Paddle() {
       }}
     >
       <mesh>
-        <boxGeometry args={[2, 0.25 / 2, 0.35]} />
+        <boxGeometry args={[1.5, 0.25 / 2, 0.35]} />
         <meshNormalMaterial />
       </mesh>
     </RigidBody>
