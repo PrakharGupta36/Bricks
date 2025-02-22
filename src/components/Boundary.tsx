@@ -16,7 +16,7 @@ export default function Boundary() {
     bottom?: boolean;
     side?: boolean; // Left or Right walls
   }) {
-    const { setTime } = useStore();
+    const { setTime, setIsTouchedFloor } = useStore();
 
     return (
       <RigidBody
@@ -41,7 +41,7 @@ export default function Boundary() {
           );
 
           if (bottom) {
-            setTime(0);
+            setIsTouchedFloor(true);
           }
 
           if (side) {

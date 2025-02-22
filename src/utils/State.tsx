@@ -30,8 +30,8 @@ interface UseStoreTypes {
   time: number;
   setTime: (updater: number | ((prev: number) => number)) => void;
 
-  actualTime: number;
-  setActualTime: (updater: number | ((prev: number) => number)) => void;
+  isTouchedFloor: boolean;
+  setIsTouchedFloor: (value: boolean) => void;
 }
 
 const useStore = create<UseStoreTypes>((set) => ({
@@ -75,12 +75,8 @@ const useStore = create<UseStoreTypes>((set) => ({
       time: typeof updater === "function" ? updater(state.time) : updater,
     })),
 
-  actualTime: 40,
-
-  setActualTime: (updater) =>
-    set((state) => ({
-      time: typeof updater === "function" ? updater(state.time) : updater,
-    })),
+  isTouchedFloor: false,
+  setIsTouchedFloor: (value: boolean) => set(() => ({ isTouchedFloor: value })),
 }));
 
 export function useMouseTracker() {
