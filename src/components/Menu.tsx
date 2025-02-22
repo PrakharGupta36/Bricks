@@ -13,10 +13,11 @@ export default function Menu() {
           <div>
             <ul>
               <li> Move the paddle using mouse </li>
-              <li> New bricks will come down every 10 seconds </li>
+              <li> A new set of bricks will come down every 5 seconds </li>
               <li> Destroy as many bricks in 60 seconds </li>
               <li>
-                Obviously the game get's over if the ball touches the bottom floor
+                Obviously the game get's over if the ball touches the bottom
+                floor
               </li>
             </ul>
           </div>

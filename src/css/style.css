@@ -38,8 +38,8 @@ main {
   border: 1px solid rgba(255, 255, 255, 0.2);
   box-shadow: rgba(17, 17, 26, 0.5) 0px 4px 16px,
     rgba(17, 17, 26, 0.5) 0px 8px 24px, rgba(17, 17, 26, 0.25) 0px 16px 56px;
-  width: 99dvw !important;
-  height: 99dvh !important;
+  width: 98dvw !important;
+  height: 98dvh !important;
   border-radius: 0.85rem;
 }
 
@@ -68,8 +68,8 @@ main {
 .overlay_container {
   background-color: rgba(0, 0, 0, 0.711);
   color: white;
-  width: 99dvw !important;
-  height: 99dvh !important;
+  width: 98dvw !important;
+  height: 98dvh !important;
   display: grid;
   place-items: center;
   font-size: 4rem;
@@ -91,5 +91,49 @@ main {
   .text {
     display: flex;
     gap: 2rem;
+  }
+}
+
+.game_over_container {
+  display: grid;
+  width: 100dvw;
+  height: 100dvh;
+  place-items: center;
+
+  .game_over {
+    width: 100dvw;
+    display: grid;
+    place-items: center;
+    color: white;
+    gap: 1rem;
+
+    p {
+      margin: 0 auto;
+      text-align: center;
+      width: 40%;
+
+      @media screen and (max-width: 800px) {
+        width: 70%;
+      }
+
+      span {
+        font-weight: bolder;
+        font-style: italic;
+        margin-left: 0.25rem;
+      }
+    }
+
+    a {
+      font-style: italic;
+      text-decoration: underline;
+    }
+
+    .start_btn {
+      background-color: black;
+      border: 1px solid rgba(255, 255, 255, 0.444);
+      color: white;
+      border-radius: 0.35rem;
+      padding: 0.5rem 2rem;
+    }
   }
 }

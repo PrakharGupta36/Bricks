@@ -92,9 +92,7 @@ export default function Bricks() {
   useFrame((_state, delta) => {
     lastLogTime.current += delta; // Accumulate elapsed time
 
-    if (lastLogTime.current >= 10) {
-      console.log("10 seconds passed!");
-
+    if (lastLogTime.current >= 5) {
       setBricks((prev: BrickObject[]) => [
         ...prev,
         {

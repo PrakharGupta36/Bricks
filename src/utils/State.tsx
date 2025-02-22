@@ -26,6 +26,9 @@ interface UseStoreTypes {
 
   mousePosition: { x: number; y: number };
   setMousePosition: (x: number, y: number) => void;
+
+  time: number;
+  setTime: (updater: number | ((prev: number) => number)) => void;
 }
 
 const useStore = create<UseStoreTypes>((set) => ({
@@ -62,9 +65,14 @@ const useStore = create<UseStoreTypes>((set) => ({
 
   mousePosition: { x: 0, y: 0 },
   setMousePosition: (x, y) => set(() => ({ mousePosition: { x, y } })),
+
+  time: 40,
+  setTime: (updater) =>
+    set((state) => ({
+      time: typeof updater === "function" ? updater(state.time) : updater,
+    })),
 }));
 
-// Mouse Tracker Hook
 export function useMouseTracker() {
   const setMousePosition = useStore((state) => state.setMousePosition);
 
@@ -78,5 +86,6 @@ export function useMouseTracker() {
     return () => window.removeEventListener("mousemove", handleMouseMove);
   }, [setMousePosition]);
 }
+
 
 export default useStore;
