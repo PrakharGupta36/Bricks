@@ -3,11 +3,20 @@ import { Html } from "@react-three/drei";
 
 export default function Menu() {
   const { setStart } = useStore();
+
+  const btnAudio = new Audio("/btnAudio.mp3");
+
   return (
     <Html center>
       <div className='menu_container'>
         <div className='start_menu'>
-          <button className='start_btn' onClick={() => setStart()}>
+          <button
+            className='start_btn'
+            onClick={() => {
+              setStart();
+              btnAudio.play();
+            }}
+          >
             Start
           </button>
           <div>
