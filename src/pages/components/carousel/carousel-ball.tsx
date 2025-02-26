@@ -5,7 +5,8 @@ import { ChevronLeft, ChevronRight } from "lucide-react";
 import useEmblaCarousel from "embla-carousel-react";
 import "../../../css/carousel.css";
 import { Canvas } from "@react-three/fiber";
-import { Html, MeshDistortMaterial } from "@react-three/drei";
+import { Html } from "@react-three/drei";
+import { toast } from "../../../utils/Toast";
 
 interface BallConfig {
   material: JSX.Element;
@@ -14,7 +15,7 @@ interface BallConfig {
 
 const ballConfigs: BallConfig[] = [
   {
-    material: <MeshDistortMaterial distort={0.2} speed={10} color='red' />,
+    material: <meshToonMaterial color='red' />,
     label: "Bounce",
   },
   {
@@ -22,8 +23,8 @@ const ballConfigs: BallConfig[] = [
     label: "Skeleton",
   },
   {
-    material: <meshPhysicalMaterial color='#FFD700' />,
-    label: "Gold",
+    material: <meshLambertMaterial color='black' />,
+    label: "Void",
   },
 ];
 
@@ -39,7 +40,19 @@ const BallCanvas: React.FC<BallCanvasProps> = ({ material, label }) => (
       {material}
     </mesh>
     <Html center>
-      <span className='info'>{label}</span>
+      <button
+        className='info'
+        onClick={() => {
+          toast({
+            title: `Selected ${label} Ball`,
+            duration: 3000,
+            variant: "success",
+            open: true,
+          });
+        }}
+      >
+        {label}
+      </button>
     </Html>
     <ambientLight intensity={0.3} />
     <pointLight intensity={10} position={[1, 1, 1]} />

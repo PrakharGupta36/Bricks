@@ -27,7 +27,8 @@ export default function Main() {
   );
 
   return (
-    <Canvas className='canvas' ref={canvasRef}>
+    <Canvas className='canvas' ref={ canvasRef }>
+      
       {start ? <Game /> : <Menu />}
     </Canvas>
   );

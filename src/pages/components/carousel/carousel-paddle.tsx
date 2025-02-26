@@ -1,11 +1,11 @@
-"use client";
-
 import * as React from "react";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import useEmblaCarousel from "embla-carousel-react";
 import { Canvas } from "@react-three/fiber";
 import { Html } from "@react-three/drei";
 import "../../../css/carousel.css";
+import {} from "react-use";
+import { toast } from "../../../utils/Toast";
 
 type MaterialType =
   | "meshPhongMaterial"
@@ -43,7 +43,19 @@ const CarouselItem: React.FC<CarouselItemProps> = ({
           {MaterialComponent}
         </mesh>
         <Html center>
-          <button className='info'>{label}</button>
+          <button
+            className='info'
+            onClick={() => {
+              toast({
+                title: `Selected ${label} Paddle`,
+                duration: 3000,
+                variant: "success",
+                open: true,
+              });
+            }}
+          >
+            {label}
+          </button>
         </Html>
         <ambientLight intensity={0.3} />
         <pointLight intensity={10} position={[1, 1, 1]} />
@@ -52,7 +64,7 @@ const CarouselItem: React.FC<CarouselItemProps> = ({
   );
 };
 
-export default function CarouselBricks() {
+export default function CarouselPaddle() {
   const [emblaRef, emblaApi] = useEmblaCarousel();
   const [canScrollPrev, setCanScrollPrev] = React.useState(false);
   const [canScrollNext, setCanScrollNext] = React.useState(false);

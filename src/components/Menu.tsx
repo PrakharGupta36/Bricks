@@ -1,14 +1,17 @@
+import { useNavigate } from "react-router";
 import useStore from "../utils/State";
 import { Html } from "@react-three/drei";
+import Brixels from "../utils/Brixels";
 
 export default function Menu() {
   const { setStart } = useStore();
-
   const btnAudio = new Audio("/btnAudio.mp3");
+  const navigate = useNavigate();
 
   return (
     <Html center>
       <div className='menu_container'>
+        <Brixels />
         <div className='start_menu'>
           <div className='start_menu_btns'>
             <button
@@ -21,17 +24,16 @@ export default function Menu() {
             >
               Start
             </button>
-            <a href='/store'>
-              <button
-                className='start_btn'
-                onClick={() => {
-                  btnAudio.volume = 1;
-                  btnAudio.play();
-                }}
-              >
-                Store
-              </button>
-            </a>
+            <button
+              className='store_btn'
+              onClick={() => {
+                navigate("/store");
+                btnAudio.volume = 1;
+                btnAudio.play();
+              }}
+            >
+              Store
+            </button>
           </div>
           <div>
             <ul>
@@ -41,6 +43,7 @@ export default function Menu() {
               <li>
                 Obviously the game ends if the ball touches the bottom floor
               </li>
+              <li>Earn "Brixels" to purchase upgrades in the store</li>
             </ul>
           </div>
         </div>

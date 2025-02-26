@@ -10,28 +10,6 @@ import { Html } from "@react-three/drei";
 import Confetti from "react-confetti";
 import { useWindowSize } from "react-use";
 
-export default function Game() {
-  const { time, countDown, isTouchedFloor } = useStore();
-
-  return (
-    <>
-      {time === 0 || isTouchedFloor ? (
-        <GameOver />
-      ) : (
-        <>
-          {countDown ? <CountDown /> : <UI />}
-          <Physics gravity={[0, -9.8, 0]}>
-            <Bricks />
-            <Ball />
-            <Paddle />
-            <Boundary />
-          </Physics>
-        </>
-      )}
-    </>
-  );
-}
-
 function GameOver() {
   const { hitBricks, time } = useStore();
   const { width, height } = useWindowSize();
@@ -61,5 +39,27 @@ function GameOver() {
         </a>
       </div>
     </Html>
+  );
+}
+
+export default function Game() {
+  const { time, countDown, isTouchedFloor } = useStore();
+
+  return (
+    <>
+      {time === 0 || isTouchedFloor ? (
+        <GameOver />
+      ) : (
+        <>
+          {countDown ? <CountDown /> : <UI />}
+          <Physics gravity={[0, -9.8, 0]}>
+            <Bricks />
+            <Ball />
+            <Paddle />
+            <Boundary />
+          </Physics>
+        </>
+      )}
+    </>
   );
 }
