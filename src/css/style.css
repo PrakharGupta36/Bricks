@@ -31,9 +31,11 @@ main {
   height: 100dvh;
   place-items: center;
   background-color: black;
+  color: white;
 }
 
-.canvas {
+.canvas,
+.store {
   background-color: #111111;
   border: 1px solid rgba(255, 255, 255, 0.2);
   box-shadow: rgba(17, 17, 26, 0.5) 0px 4px 16px,
@@ -54,13 +56,18 @@ main {
     /* width: 100dvw; */
     color: rgb(184, 184, 184);
 
-    .start_btn {
-      background-color: black;
-      border: 1px solid rgba(255, 255, 255, 0.444);
-      color: white;
-      border-radius: 0.35rem;
-      padding: 0.5rem 2rem;
+    .start_menu_btns {
+      display: flex;
+      gap: 1rem;
       margin-left: 1.5rem;
+
+      .start_btn {
+        background-color: black;
+        border: 1px solid rgba(255, 255, 255, 0.444);
+        color: white;
+        border-radius: 0.35rem;
+        padding: 0.5rem 2rem;
+      }
     }
   }
 }

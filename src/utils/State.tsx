@@ -21,6 +21,9 @@ interface UseStoreTypes {
   hitBricks: BrickObject[];
   handleCollision: (brickId: number) => void;
 
+  brixels: number;
+  setBrixels: (updater: number | ((prev: number) => number)) => void;
+
   canvasRef: { current: HTMLCanvasElement | null };
   setCanvasRef: (ref: HTMLCanvasElement | null) => void;
 
@@ -59,8 +62,15 @@ const useStore = create<UseStoreTypes>((set) => ({
       return {
         bricks: state.bricks.filter((brick) => brick.id !== brickId),
         hitBricks: [...state.hitBricks, hitBrick],
+        brixels: state.brixels + 10, // 🎉 Award 10 Brixels per hit
       };
     }),
+
+  brixels: 0, // Initial Brixels count
+  setBrixels: (updater) =>
+    set((state) => ({
+      brixels: typeof updater === "function" ? updater(state.brixels) : updater,
+    })),
 
   canvasRef: { current: null },
   setCanvasRef: (ref) =>

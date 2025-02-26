@@ -1,0 +1,55 @@
+.store {
+  display: grid;
+  place-items: center;
+
+  .close-icon {
+    justify-self: end;
+    align-self: self-start;
+    position: absolute;
+    margin: 1rem;
+    text-decoration: none;
+
+    .icon {
+      border: 1px solid wheat;
+      padding: 0.2rem;
+      border-radius: 1rem;
+      color: white;
+      transition: all 0.3s;
+
+      &:hover {
+        background-color: white;
+        color: black;
+      }
+    }
+  }
+
+  .store-carousels {
+    display: grid;
+    gap: 3rem;
+
+    .store-carousels-item {
+      display: grid;
+      gap: 0.5rem;
+      place-items: center;
+
+      p {
+        /* background-color: rgba(0, 0, 0, 0.336); */
+        padding: 0.5rem 1rem;
+        /* border-bottom: 1px solid white; */
+        border-radius: 0.5rem;
+        text-decoration: underline;
+      }
+    }
+  }
+
+  .info {
+    background-color: rgba(0, 0, 0, 1);
+    color: white;
+    padding: 0.5rem 1rem;
+    /* border: 1px solid white; */
+    border-radius: 0.5rem;
+    position: absolute;
+    transform: translate(-50%, -50%);
+    cursor: pointer;
+  }
+}
