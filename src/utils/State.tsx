@@ -238,7 +238,7 @@ const useStore = create<UseStoreTypes>()(
           };
         }),
 
-      brixels: 700, // Initial Brixels count
+      brixels: 0, // Initial Brixels count
       setBrixels: (updater) =>
         set((state) => ({
           brixels:
