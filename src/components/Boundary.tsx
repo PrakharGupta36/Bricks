@@ -55,11 +55,17 @@ export default function Boundary() {
           // Apply new velocity
           ballRigidBody.setLinvel(newVelocity, true);
         }}
-        restitution={1} // Ensures perfect bounce
+        restitution={0.9} // Slightly reduce bounce for realism
       >
-        <mesh position={position} rotation={rotation}>
+        <mesh position={position} rotation={rotation} receiveShadow >
           <planeGeometry args={[scale[0], scale[1]]} />
-          <meshBasicMaterial wireframe side={THREE.DoubleSide} />
+          <meshStandardMaterial
+            color={"black"}
+            metalness={0.1}
+            roughness={1}
+            emissive={"#222"}
+            side={THREE.DoubleSide}
+          />
         </mesh>
       </RigidBody>
     );

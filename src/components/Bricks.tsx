@@ -180,9 +180,9 @@ export default function Bricks() {
                 handleCollision(brick.id);
               }}
             >
-              <mesh position={brick.position}>
+              <mesh receiveShadow castShadow position={brick.position}>
                 <boxGeometry args={[1.75, 0.2, 0.3]} />
-                <meshNormalMaterial />
+                <meshStandardMaterial color={"white"} />
               </mesh>
             </RigidBody>
           );

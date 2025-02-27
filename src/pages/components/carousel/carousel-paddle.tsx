@@ -4,58 +4,64 @@ import useEmblaCarousel from "embla-carousel-react";
 import { Canvas } from "@react-three/fiber";
 import { Html } from "@react-three/drei";
 import "../../../css/carousel.css";
-import {} from "react-use";
 import { toast } from "../../../utils/Toast";
+import useStore, {
+  PaddleMaterialComponent,
+  type PaddleType,
+} from "../../../utils/State";
 
-type MaterialType =
-  | "meshPhongMaterial"
-  | "meshPhysicalMaterial"
-  | "meshStandardMaterial";
-
-type CarouselItemProps = {
-  color: string;
-  label: string;
-  material: MaterialType;
-};
-
-const items: CarouselItemProps[] = [
-  { color: "#49db46", label: "Leaf", material: "meshPhongMaterial" },
-  { color: "#CF1020", label: "Lava", material: "meshPhysicalMaterial" },
-  { color: "#4582e6", label: "Sky", material: "meshStandardMaterial" },
-];
-
-const CarouselItem: React.FC<CarouselItemProps> = ({
-  color,
-  label,
-  material,
-}) => {
-  const MaterialComponent = {
-    meshPhongMaterial: <meshPhongMaterial color={color} />,
-    meshPhysicalMaterial: <meshPhysicalMaterial color={color} />,
-    meshStandardMaterial: <meshStandardMaterial color={color} />,
-  }[material] || <meshBasicMaterial color={color} />;
+const CarouselItem: React.FC<PaddleType> = (paddle: PaddleType) => {
+  const { setPaddles, brixels, setBrixels, purchasePaddle } = useStore();
+  const { id, color, label, material, selected, price, purchased } = paddle;
 
   return (
     <div className='carousel-item'>
       <Canvas camera={{ zoom: 10 }}>
         <mesh rotation={[0.4, 0.5, 0]}>
           <boxGeometry args={[1.5, 0.125, 0.35]} />
-          {MaterialComponent}
+          {PaddleMaterialComponent(color, material)}
         </mesh>
         <Html center>
-          <button
-            className='info'
-            onClick={() => {
-              toast({
-                title: `Selected ${label} Paddle`,
-                duration: 3000,
-                variant: "success",
-                open: true,
-              });
-            }}
-          >
-            {label}
-          </button>
+          <div className='info-container'>
+            <button
+              className='btn'
+              disabled={selected}
+              onClick={() => {
+                if (brixels >= price && !purchased && !selected) {
+                  setPaddles(id);
+                  purchasePaddle(id);
+                  setBrixels(brixels - price);
+                  toast({
+                    title: `Selected ${label} Paddle`,
+                    duration: 3000,
+                    variant: "success",
+                    open: true,
+                  });
+                } else if (purchased && !selected) {
+                  setPaddles(id);
+                  toast({
+                    title: `Selected ${label} Paddle`,
+                    duration: 3000,
+                    variant: "success",
+                    open: true,
+                  });
+                } else {
+                  toast({
+                    title: `Don't have enough Brixels`,
+                    duration: 3000,
+                    variant: "destructive",
+                    open: true,
+                  });
+                }
+              }}
+            >
+              {selected ? "Selected" : label}
+            </button>
+            <span className='price'>
+              {" "}
+              {purchased ? "Purchased" : `${price} Brixels`}{" "}
+            </span>
+          </div>
         </Html>
         <ambientLight intensity={0.3} />
         <pointLight intensity={10} position={[1, 1, 1]} />
@@ -65,44 +71,36 @@ const CarouselItem: React.FC<CarouselItemProps> = ({
 };
 
 export default function CarouselPaddle() {
-  const [emblaRef, emblaApi] = useEmblaCarousel();
-  const [canScrollPrev, setCanScrollPrev] = React.useState(false);
-  const [canScrollNext, setCanScrollNext] = React.useState(false);
+  const [emblaRef, emblaApi] = useEmblaCarousel({ loop: true });
+  const { paddles } = useStore();
 
-  const updateScrollState = React.useCallback(() => {
-    if (!emblaApi) return;
-    setCanScrollPrev(emblaApi.canScrollPrev());
-    setCanScrollNext(emblaApi.canScrollNext());
+  const scrollPrev = React.useCallback(() => {
+    if (emblaApi) emblaApi.scrollPrev();
   }, [emblaApi]);
 
-  React.useEffect(() => {
-    if (!emblaApi) return;
-    updateScrollState();
-    emblaApi.on("select", updateScrollState);
-    emblaApi.on("reInit", updateScrollState);
-  }, [emblaApi, updateScrollState]);
+  const scrollNext = React.useCallback(() => {
+    if (emblaApi) emblaApi.scrollNext();
+  }, [emblaApi]);
 
   return (
     <div className='carousel'>
       <div ref={emblaRef} className='carousel-viewport'>
         <div className='carousel-content'>
-          {items.map((item, index) => (
+          {paddles.map((item, index) => (
             <CarouselItem key={index} {...item} />
           ))}
         </div>
       </div>
       <button
         className='carousel-button carousel-prev'
-        onClick={() => emblaApi?.scrollPrev()}
-        disabled={!canScrollPrev}
+        onClick={scrollPrev}
         aria-label='Previous slide'
       >
         <ChevronLeft size={20} />
       </button>
       <button
         className='carousel-button carousel-next'
-        onClick={() => emblaApi?.scrollNext()}
-        disabled={!canScrollNext}
+        onClick={scrollNext}
         aria-label='Next slide'
       >
         <ChevronRight size={20} />

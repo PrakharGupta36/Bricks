@@ -9,6 +9,7 @@ import UI from "./UI";
 import { Html } from "@react-three/drei";
 import Confetti from "react-confetti";
 import { useWindowSize } from "react-use";
+import Lights from "./Lights";
 
 function GameOver() {
   const { hitBricks, time } = useStore();
@@ -51,6 +52,7 @@ export default function Game() {
         <GameOver />
       ) : (
         <>
+          <Lights />
           {countDown ? <CountDown /> : <UI />}
           <Physics gravity={[0, -9.8, 0]}>
             <Bricks />

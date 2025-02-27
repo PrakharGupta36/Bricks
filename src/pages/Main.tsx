@@ -7,7 +7,6 @@ import { useGSAP } from "@gsap/react";
 import Game from "../components/Game";
 import Menu from "../components/Menu";
 
-
 export default function Main() {
   const { start, canvasRef } = useStore();
 
@@ -27,8 +26,7 @@ export default function Main() {
   );
 
   return (
-    <Canvas className='canvas' ref={ canvasRef }>
-      
+    <Canvas className='canvas' ref={canvasRef}>
       {start ? <Game /> : <Menu />}
     </Canvas>
   );

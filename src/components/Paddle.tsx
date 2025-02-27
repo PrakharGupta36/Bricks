@@ -2,13 +2,20 @@ import { useRef } from "react";
 import { useFrame } from "@react-three/fiber";
 import { RigidBody, type RapierRigidBody } from "@react-three/rapier";
 import * as THREE from "three";
-import useStore, { useMouseTracker } from "../utils/State";
+import useStore, {
+  PaddleMaterialComponent,
+  useMouseTracker,
+} from "../utils/State";
 
 export default function Paddle() {
   useMouseTracker(); // ✅ Ensures mouse tracking starts
 
   const rigidBodyRef = useRef<RapierRigidBody | null>(null);
   const mousePosition = useStore((state) => state.mousePosition);
+
+  const { paddles } = useStore();
+
+  const paddle = paddles.find((e) => e.selected);
 
   useFrame(() => {
     if (rigidBodyRef.current) {
@@ -39,9 +46,13 @@ export default function Paddle() {
         ballRigidBody.applyImpulse(randomImpulse, true);
       }}
     >
-      <mesh>
-        <boxGeometry args={[1.5, 0.25 / 2, 0.35]} />
-        <meshNormalMaterial />
+      <mesh receiveShadow castShadow>
+        <boxGeometry args={[1.5, 0.125, 0.35]} />
+        {paddle?.material.length ? (
+          PaddleMaterialComponent(paddle?.color, paddle?.material)
+        ) : (
+          <meshNormalMaterial />
+        )}
       </mesh>
     </RigidBody>
   );
