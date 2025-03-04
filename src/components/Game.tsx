@@ -10,13 +10,16 @@ import { Html } from "@react-three/drei";
 import Confetti from "react-confetti";
 import { useWindowSize } from "react-use";
 import Lights from "./Lights";
+import Brixels from "../utils/Brixels";
 
 function GameOver() {
   const { hitBricks, time } = useStore();
   const { width, height } = useWindowSize();
+  const btnAudio = new Audio("/btnAudio.mp3");
 
   return (
     <Html center className='game_over_container'>
+      <Brixels />
       <Confetti
         width={width}
         height={height}
@@ -25,16 +28,22 @@ function GameOver() {
       />
       <div className='game_over'>
         <p>
-          Congratrulations, your score was {hitBricks.length}
+          Congratulations, your score was {hitBricks.length}
           <span>
-            and also you have wasted {40 - time} seconds of your life in this
-            game
+            {" "}
+            and you have wasted {40 - time} seconds of your life in this game
           </span>
         </p>
-        <button className='start_btn' onClick={() => window.location.reload()}>
+        <button
+          className='start_btn'
+          onClick={() => {
+            btnAudio.volume = 1;
+            btnAudio.play();
+            setTimeout(() => window.location.reload(), 300); // Delay for sound effect
+          }}
+        >
           Play Again
         </button>
-
         <a href='https://x.com/___prakhar' className='credit' target='__blank'>
           ~ Made by Prakhar ❤️
         </a>

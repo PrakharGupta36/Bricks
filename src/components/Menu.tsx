@@ -17,7 +17,7 @@ export default function Menu() {
             <button
               className='start_btn'
               onClick={() => {
-                setStart();
+                setStart(true);
                 btnAudio.volume = 1;
                 btnAudio.play();
               }}

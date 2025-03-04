@@ -117,6 +117,10 @@ main {
   height: 100dvh;
   place-items: center;
 
+  .brixels {
+    right: 1rem;
+  }
+
   .game_over {
     width: 100dvw;
     display: grid;

@@ -1,195 +1,164 @@
+import React, { useEffect, useRef, useMemo, useCallback } from "react";
 import { RigidBody } from "@react-three/rapier";
-import useStore from "../utils/State";
-import { useEffect, useRef } from "react";
-import * as THREE from "three";
 import { useFrame } from "@react-three/fiber";
+import * as THREE from "three";
+import * as Tone from "tone";
+import useStore from "../utils/State";
 
 type BrickObject = {
   id: number;
   position: [number, number, number];
 };
 
+// Create a single synth for an arcade-style wall hit sound
+const createWallHitSynth = () => {
+  const synth = new Tone.MembraneSynth({
+    pitchDecay: 0.05, // Quick pitch drop for a snappy effect
+    octaves: 3, // Gives it that classic arcade feel
+    envelope: {
+      attack: 0.005,
+      decay: 0.1, // Fast decay for a punchy sound
+      sustain: 0,
+      release: 0.05,
+    },
+  }).toDestination();
+
+  return synth;
+};
+
 export default function Bricks() {
   const { bricks, setBricks, handleCollision } = useStore();
 
-  const height = 3;
+  // Ref for wall hit synth
+  const wallHitSynth = useRef<Tone.MembraneSynth | null>(null);
 
+  // Initialize synth
   useEffect(() => {
-    setBricks([
-      // Row - 1
-      {
-        id: 1,
-        position: [-4, height, 0],
-      },
-      {
-        id: 2,
-        position: [-2, height, 0],
-      },
-      {
-        id: 3,
-        position: [0, height, 0],
-      },
-      {
-        id: 4,
-        position: [2, height, 0],
-      },
-      {
-        id: 5,
-        position: [4, height, 0],
-      },
-      // Row - 2
+    wallHitSynth.current = createWallHitSynth();
 
-      {
-        id: 6,
-        position: [-4, height - 0.5, 0],
-      },
-      {
-        id: 7,
-        position: [-2, height - 0.5, 0],
-      },
-      {
-        id: 8,
-        position: [0, height - 0.5, 0],
-      },
-      {
-        id: 9,
-        position: [2, height - 0.5, 0],
-      },
-      {
-        id: 10,
-        position: [4, height - 0.5, 0],
-      },
+    return () => {
+      wallHitSynth.current?.dispose();
+    };
+  }, []);
 
-      // Row - 3
+  // Define brick layout
+  const initialBricks = useMemo(() => {
+    const height = 3;
+    const columns = [-4, -2, 0, 2, 4];
+    const rows = [height, height - 0.5, height - 1];
 
-      {
-        id: 11,
-        position: [-4, height - 1, 0],
-      },
-      {
-        id: 12,
-        position: [-2, height - 1, 0],
-      },
-      {
-        id: 13,
-        position: [0, height - 1, 0],
-      },
-      {
-        id: 14,
-        position: [2, height - 1, 0],
-      },
-      {
-        id: 15,
-        position: [4, height - 1, 0],
-      },
-    ]);
-  }, [setBricks]);
+    return rows.flatMap((rowHeight, rowIndex) =>
+      columns.map((x, colIndex) => ({
+        id: rowIndex * columns.length + colIndex + 1,
+        position: [x, rowHeight, 0] as [number, number, number],
+      }))
+    );
+  }, []);
 
-  const lastLogTime = useRef(0); // Stores the last logged time
+  // Set bricks on mount
+  useEffect(() => {
+    setBricks(initialBricks);
+  }, [setBricks, initialBricks]);
 
+  // Performance-optimized time tracking
+  const lastLogTime = useRef(0);
   const heightGap = 0.5;
 
+  // Memoized collision handler with arcade sound
+  const handleBrickCollision = useCallback(
+    (brick: BrickObject) => {
+      if (wallHitSynth.current) {
+        const notes = ["C5", "D5", "E5", "G5"]; // Classic arcade tones
+        const randomNote = notes[Math.floor(Math.random() * notes.length)];
+        wallHitSynth.current.triggerAttackRelease(randomNote, "8n");
+      }
+
+      handleCollision(brick.id);
+    },
+    [handleCollision]
+  );
+
+  // Auto-generate bricks over time
   useFrame((_state, delta) => {
-    lastLogTime.current += delta; // Accumulate elapsed time
+    lastLogTime.current += delta;
 
     if (lastLogTime.current >= 5) {
-      setBricks((prev: BrickObject[]) => [
-        ...prev,
-        {
-          id: prev[prev.length - 1].id + 1, // Ensure an ID
-          position: [-4, prev[prev.length - 1].position[1] - heightGap, 0] as [
-            number,
-            number,
-            number
-          ], // Correctly typed tuple
-        },
-        {
-          id: prev[prev.length - 1].id + 2, // Ensure an ID
-          position: [-2, prev[prev.length - 1].position[1] - heightGap, 0] as [
-            number,
-            number,
-            number
-          ], // Correctly typed tuple
-        },
-        {
-          id: prev[prev.length - 1].id + 3, // Ensure an ID
-          position: [0, prev[prev.length - 1].position[1] - heightGap, 0] as [
-            number,
-            number,
-            number
-          ], // Correctly typed tuple
-        },
-        {
-          id: prev[prev.length - 1].id + 4, // Ensure an ID
-          position: [2, prev[prev.length - 1].position[1] - heightGap, 0] as [
-            number,
-            number,
-            number
-          ], // Correctly typed tuple
-        },
-        {
-          id: prev[prev.length - 1].id + 5, // Ensure an ID
-          position: [4, prev[prev.length - 1].position[1] - heightGap, 0] as [
-            number,
-            number,
-            number
-          ], // Correctly typed tuple
-        },
-      ]);
+      setBricks((prev: BrickObject[]) => {
+        const lastBrick = prev[prev.length - 1];
+        const newBricks: BrickObject[] = [
+          {
+            id: lastBrick.id + 1,
+            position: [-4, lastBrick.position[1] - heightGap, 0],
+          },
+          {
+            id: lastBrick.id + 2,
+            position: [-2, lastBrick.position[1] - heightGap, 0],
+          },
+          {
+            id: lastBrick.id + 3,
+            position: [0, lastBrick.position[1] - heightGap, 0],
+          },
+          {
+            id: lastBrick.id + 4,
+            position: [2, lastBrick.position[1] - heightGap, 0],
+          },
+          {
+            id: lastBrick.id + 5,
+            position: [4, lastBrick.position[1] - heightGap, 0],
+          },
+        ];
+        return [...prev, ...newBricks];
+      });
 
-      lastLogTime.current = 0; // Reset the timer
+      lastLogTime.current = 0;
     }
   });
 
-  return (
-    <>
-      {bricks.length ? (
-        bricks.map((brick) => {
-          return (
-            <RigidBody
-              key={brick.id}
-              colliders='cuboid'
-              type='fixed'
-              restitution={1.5}
-              name={`brick-${brick.id}`}
-              onContactForce={(e) => {
-                const ballRigidBody = e.rigidBody;
-                if (!ballRigidBody) return;
+  // Memoized brick rendering
+  const renderedBricks = useMemo(() => {
+    return bricks.map((brick) => (
+      <RigidBody
+        key={brick.id}
+        colliders='cuboid'
+        type='fixed'
+        restitution={1.5}
+        name={`brick-${brick.id}`}
+        onContactForce={(e) => {
+          const ballRigidBody = e.rigidBody;
+          if (!ballRigidBody) return;
 
-                // Slow down the ball by reducing its velocity
-                const currentVelocity = ballRigidBody.linvel(); // Get current velocity
-                const slowFactor = 0.1; // Adjust this to control how much it slows down
+          // Apply velocity slowdown
+          const currentVelocity = ballRigidBody.linvel();
+          const slowFactor = 0.3;
 
-                const newVelocity = new THREE.Vector3(
-                  currentVelocity.x * slowFactor,
-                  currentVelocity.y * slowFactor,
-                  currentVelocity.z * slowFactor
-                );
-
-                ballRigidBody.setLinvel(newVelocity, true);
-
-                // Apply a small impulse to bricks
-                const randomImpulse = new THREE.Vector3(
-                  (Math.random() - 0.5) * 0.6,
-                  0,
-                  0
-                );
-
-                ballRigidBody.applyImpulse(randomImpulse, true);
-
-                handleCollision(brick.id);
-              }}
-            >
-              <mesh receiveShadow castShadow position={brick.position}>
-                <boxGeometry args={[1.75, 0.2, 0.3]} />
-                <meshStandardMaterial color={"white"} />
-              </mesh>
-            </RigidBody>
+          const newVelocity = new THREE.Vector3(
+            currentVelocity.x * slowFactor,
+            currentVelocity.y * slowFactor,
+            currentVelocity.z * slowFactor
           );
-        })
-      ) : (
-        <> </>
-      )}
-    </>
-  );
+
+          ballRigidBody.setLinvel(newVelocity, true);
+
+          // Random impulse to make it dynamic
+          const randomImpulse = new THREE.Vector3(
+            (Math.random() - 0.5) * 0.9,
+            0,
+            0
+          );
+
+          ballRigidBody.applyImpulse(randomImpulse, true);
+
+          // Play arcade sound
+          handleBrickCollision(brick);
+        }}
+      >
+        <mesh receiveShadow castShadow position={brick.position}>
+          <boxGeometry args={[1.75, 0.2, 0.3]} />
+          <meshStandardMaterial color='white' />
+        </mesh>
+      </RigidBody>
+    ));
+  }, [bricks, handleBrickCollision]);
+
+  return <>{renderedBricks}</>;
 }

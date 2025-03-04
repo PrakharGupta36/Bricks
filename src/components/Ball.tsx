@@ -11,6 +11,7 @@ export default function Ball() {
       colliders={"ball"}
       type={countDown < 1 ? `dynamic` : "fixed"}
       name='ball'
+      restitution={0.25}
     >
       <mesh scale={1.1}>
         <sphereGeometry args={[0.3, 16, 16]} />

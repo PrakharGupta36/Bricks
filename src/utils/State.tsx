@@ -72,7 +72,7 @@ export const BallMaterialComponent = (
 interface UseStoreTypes {
   start: boolean;
   countDown: number;
-  setStart: () => void;
+  setStart: (value: boolean) => void;
   setCountDown: (updater: number | ((prev: number) => number)) => void;
 
   bricks: BrickObject[];
@@ -125,6 +125,13 @@ interface UseStoreTypes {
   // New functions for purchasing
   purchasePaddle: (id: number) => boolean;
   purchaseBall: (id: number) => boolean;
+
+  // sfx
+  sound: boolean;
+  music: boolean;
+
+  setSound: (value: boolean) => void;
+  setMusic: (value: boolean) => void;
 }
 
 // Initial values for the store
@@ -211,7 +218,7 @@ const useStore = create<UseStoreTypes>()(
     (set, get) => ({
       start: false,
       countDown: 3,
-      setStart: () => set({ start: true }),
+      setStart: (value: boolean) => set({ start: value }),
       setCountDown: (updater) =>
         set((state) => ({
           countDown:
@@ -306,7 +313,15 @@ const useStore = create<UseStoreTypes>()(
 
         return true;
       },
+
+      // sfx
+      sound: true,
+      music: true,
+
+      setSound: (value: boolean) => set(() => ({ sound: value })),
+      setMusic: (value: boolean) => set(() => ({ music: value })),
     }),
+
     {
       name: "brixels-game-storage", // unique name for localStorage
       storage: createJSONStorage(() => localStorage),
