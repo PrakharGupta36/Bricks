@@ -22,6 +22,7 @@ function GameOver() {
     setTime,
     setCountDown,
     setBricks,
+    sound,
   } = useStore();
   const { width, height } = useWindowSize();
   const btnAudio = new Audio("/btnAudio.mp3");
@@ -40,7 +41,7 @@ function GameOver() {
   }, []);
 
   function gameRestart() {
-    btnAudio.volume = 1;
+    btnAudio.volume = sound ? 1 : 0;
     btnAudio.play();
     setStart(false);
     setIsTouchedFloor(false);

@@ -11,7 +11,7 @@ import useStore, { BallMaterialComponent } from "../../../utils/State";
 const BallCanvas: React.FC<BallType> = (ball: BallType) => {
   const { id, color, material, label, selected, price, purchased } = ball;
 
-  const { setBalls, brixels, setBrixels, purchaseBall } = useStore();
+  const { setBalls, brixels, setBrixels, purchaseBall, sound } = useStore();
 
   const storeAudio = React.useMemo(() => new Audio("/storeAudio.mp3"), []);
   const storeAudioError = React.useMemo(
@@ -20,9 +20,12 @@ const BallCanvas: React.FC<BallType> = (ball: BallType) => {
   );
 
   React.useEffect(() => {
+    storeAudio.volume = sound ? 1 : 0;
+    storeAudioError.volume = sound ? 1 : 0;
+
     storeAudio.preload = "auto";
     storeAudioError.preload = "auto";
-  }, [storeAudio, storeAudioError]);
+  }, [storeAudio, storeAudioError, sound]);
 
   return (
     <Canvas camera={{ zoom: 3.5 }}>

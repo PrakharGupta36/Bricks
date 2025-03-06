@@ -2,9 +2,10 @@ import { useNavigate } from "react-router";
 import useStore from "../utils/State";
 import { Html } from "@react-three/drei";
 import Brixels from "../utils/Brixels";
+import { Volume2, VolumeOff } from "lucide-react";
 
 export default function Menu() {
-  const { setStart } = useStore();
+  const { setStart, sound, setSound } = useStore();
   const btnAudio = new Audio("/btnAudio.mp3");
   const navigate = useNavigate();
 
@@ -18,7 +19,7 @@ export default function Menu() {
               className='start_btn'
               onClick={() => {
                 setStart(true);
-                btnAudio.volume = 1;
+                btnAudio.volume = sound ? 1 : 0;
                 btnAudio.play();
               }}
             >
@@ -28,11 +29,14 @@ export default function Menu() {
               className='store_btn'
               onClick={() => {
                 navigate("/store");
-                btnAudio.volume = 1;
+                btnAudio.volume = sound ? 1 : 0;
                 btnAudio.play();
               }}
             >
               Store
+            </button>
+            <button onClick={() => setSound(!sound)} className='sound_btn'>
+              {sound ? <Volume2 /> : <VolumeOff />}
             </button>
           </div>
           <div>

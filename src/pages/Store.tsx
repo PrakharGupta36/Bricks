@@ -4,11 +4,12 @@ import CarouselBall from "./components/carousel/carousel-ball";
 import CarouselPaddle from "./components/carousel/carousel-paddle";
 import { useNavigate } from "react-router";
 import Brixels from "../utils/Brixels";
-
+import useStore from "../utils/State";
 
 export default function Store() {
   const btnAudio = new Audio("/btnAudio.mp3");
   const navigate = useNavigate();
+  const { sound } = useStore();
 
   return (
     <div className='store'>
@@ -16,7 +17,7 @@ export default function Store() {
         className='icon'
         onClick={() => {
           navigate("/");
-          btnAudio.volume = 1;
+          btnAudio.volume = sound ? 1 : 0;
           btnAudio.play();
         }}
       />

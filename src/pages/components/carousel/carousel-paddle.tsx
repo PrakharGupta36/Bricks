@@ -11,9 +11,8 @@ import useStore, {
 } from "../../../utils/State";
 
 const CarouselItem: React.FC<PaddleType> = (paddle: PaddleType) => {
-  const { setPaddles, brixels, setBrixels, purchasePaddle } = useStore();
+  const { setPaddles, brixels, setBrixels, purchasePaddle, sound } = useStore();
   const { id, color, label, material, selected, price, purchased } = paddle;
-
 
   const storeAudio = React.useMemo(() => new Audio("/storeAudio.mp3"), []);
   const storeAudioError = React.useMemo(
@@ -22,9 +21,12 @@ const CarouselItem: React.FC<PaddleType> = (paddle: PaddleType) => {
   );
 
   React.useEffect(() => {
+    storeAudio.volume = sound ? 1 : 0;
+    storeAudioError.volume = sound ? 1 : 0;
+
     storeAudio.preload = "auto";
     storeAudioError.preload = "auto";
-  }, [storeAudio, storeAudioError]);
+  }, [storeAudio, storeAudioError, sound]);
 
   return (
     <div className='carousel-item'>
@@ -96,8 +98,6 @@ export default function CarouselPaddle() {
   const scrollNext = React.useCallback(() => {
     if (emblaApi) emblaApi.scrollNext();
   }, [emblaApi]);
-
-  
 
   return (
     <div className='carousel'>

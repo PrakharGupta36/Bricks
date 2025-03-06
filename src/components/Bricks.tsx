@@ -10,14 +10,14 @@ type BrickObject = {
   position: [number, number, number];
 };
 
-// Create a single synth for an arcade-style wall hit sound
-const createWallHitSynth = () => {
+const createWallHitSynth = ({ sound }: { sound: boolean }) => {
   const synth = new Tone.MembraneSynth({
-    pitchDecay: 0.05, // Quick pitch drop for a snappy effect
-    octaves: 1, // Gives it that classic arcade feel
+    volume: sound ? 0 : -Infinity,
+    pitchDecay: 0.05,
+    octaves: 1,
     envelope: {
       attack: 0.005,
-      decay: 0.1, // Fast decay for a punchy sound
+      decay: 0.1,
       sustain: 0,
       release: 0.05,
     },
@@ -27,21 +27,18 @@ const createWallHitSynth = () => {
 };
 
 export default function Bricks() {
-  const { bricks, setBricks, handleCollision } = useStore();
+  const { bricks, setBricks, handleCollision, sound } = useStore();
 
-  // Ref for wall hit synth
   const wallHitSynth = useRef<Tone.MembraneSynth | null>(null);
 
-  // Initialize synth
   useEffect(() => {
-    wallHitSynth.current = createWallHitSynth();
+    wallHitSynth.current = createWallHitSynth({ sound });
 
     return () => {
       wallHitSynth.current?.dispose();
     };
-  }, []);
+  }, [sound]);
 
-  // Define brick layout
   const initialBricks = useMemo(() => {
     const height = 3;
     const columns = [-4, -2, 0, 2, 4];

@@ -128,10 +128,8 @@ interface UseStoreTypes {
 
   // sfx
   sound: boolean;
-  music: boolean;
 
   setSound: (value: boolean) => void;
-  setMusic: (value: boolean) => void;
 }
 
 // Initial values for the store
@@ -316,13 +314,11 @@ const useStore = create<UseStoreTypes>()(
 
       // sfx
       sound: true,
-      music: true,
 
       setSound: (value: boolean) => set(() => ({ sound: value })),
-      setMusic: (value: boolean) => set(() => ({ music: value })),
     }),
 
-    {
+    { 
       name: "brixels-game-storage", // unique name for localStorage
       storage: createJSONStorage(() => localStorage),
       partialize: (state) => ({
@@ -330,6 +326,7 @@ const useStore = create<UseStoreTypes>()(
         brixels: state.brixels,
         paddles: state.paddles,
         balls: state.balls,
+        sound: state.sound,
       }),
     }
   )

@@ -78,6 +78,13 @@ main {
         border-radius: 0.35rem;
         padding: 0.5rem 2rem;
       }
+      .sound_btn {
+        background-color: transparent;
+        color: white;
+        border: none;
+        display: flex;
+        align-items: center;
+      }
     }
   }
 }
