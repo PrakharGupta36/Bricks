@@ -20,6 +20,14 @@ export default function Main() {
           },
           { backgroundColor: "white", duration: 0.75 }
         );
+      } else {
+        gsap.fromTo(
+          "main",
+          {
+            backgroundColor: "white",
+          },
+          { backgroundColor: "black", duration: 0.75 }
+        );
       }
     },
     { dependencies: [start] }

@@ -13,6 +13,17 @@ const BallCanvas: React.FC<BallType> = (ball: BallType) => {
 
   const { setBalls, brixels, setBrixels, purchaseBall } = useStore();
 
+  const storeAudio = React.useMemo(() => new Audio("/storeAudio.mp3"), []);
+  const storeAudioError = React.useMemo(
+    () => new Audio("/storeAudioError.mp3"),
+    []
+  );
+
+  React.useEffect(() => {
+    storeAudio.preload = "auto";
+    storeAudioError.preload = "auto";
+  }, [storeAudio, storeAudioError]);
+
   return (
     <Canvas camera={{ zoom: 3.5 }}>
       <mesh>
@@ -35,6 +46,7 @@ const BallCanvas: React.FC<BallType> = (ball: BallType) => {
                   variant: "success",
                   open: true,
                 });
+                storeAudio.play();
               } else if (purchased) {
                 setBalls(id);
                 toast({
@@ -43,6 +55,7 @@ const BallCanvas: React.FC<BallType> = (ball: BallType) => {
                   variant: "success",
                   open: true,
                 });
+                storeAudio.play();
               } else {
                 toast({
                   title: `Don't have enough Brixels`,
@@ -50,6 +63,7 @@ const BallCanvas: React.FC<BallType> = (ball: BallType) => {
                   variant: "destructive",
                   open: true,
                 });
+                storeAudioError.play();
               }
             }}
           >

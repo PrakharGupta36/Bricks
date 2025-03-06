@@ -14,6 +14,18 @@ const CarouselItem: React.FC<PaddleType> = (paddle: PaddleType) => {
   const { setPaddles, brixels, setBrixels, purchasePaddle } = useStore();
   const { id, color, label, material, selected, price, purchased } = paddle;
 
+
+  const storeAudio = React.useMemo(() => new Audio("/storeAudio.mp3"), []);
+  const storeAudioError = React.useMemo(
+    () => new Audio("/storeAudioError.mp3"),
+    []
+  );
+
+  React.useEffect(() => {
+    storeAudio.preload = "auto";
+    storeAudioError.preload = "auto";
+  }, [storeAudio, storeAudioError]);
+
   return (
     <div className='carousel-item'>
       <Canvas camera={{ zoom: 10 }}>
@@ -37,6 +49,7 @@ const CarouselItem: React.FC<PaddleType> = (paddle: PaddleType) => {
                     variant: "success",
                     open: true,
                   });
+                  storeAudio.play();
                 } else if (purchased && !selected) {
                   setPaddles(id);
                   toast({
@@ -45,6 +58,7 @@ const CarouselItem: React.FC<PaddleType> = (paddle: PaddleType) => {
                     variant: "success",
                     open: true,
                   });
+                  storeAudio.play();
                 } else {
                   toast({
                     title: `Don't have enough Brixels`,
@@ -52,6 +66,7 @@ const CarouselItem: React.FC<PaddleType> = (paddle: PaddleType) => {
                     variant: "destructive",
                     open: true,
                   });
+                  storeAudioError.play();
                 }
               }}
             >
@@ -81,6 +96,8 @@ export default function CarouselPaddle() {
   const scrollNext = React.useCallback(() => {
     if (emblaApi) emblaApi.scrollNext();
   }, [emblaApi]);
+
+  
 
   return (
     <div className='carousel'>

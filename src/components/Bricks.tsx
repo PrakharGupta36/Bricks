@@ -14,7 +14,7 @@ type BrickObject = {
 const createWallHitSynth = () => {
   const synth = new Tone.MembraneSynth({
     pitchDecay: 0.05, // Quick pitch drop for a snappy effect
-    octaves: 3, // Gives it that classic arcade feel
+    octaves: 1, // Gives it that classic arcade feel
     envelope: {
       attack: 0.005,
       decay: 0.1, // Fast decay for a punchy sound

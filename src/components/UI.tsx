@@ -25,7 +25,7 @@ export default function UI() {
         <hr />
         <p className='text'>
           <span>Rows:</span>{" "}
-          <span>{(bricks.length + hitBricks.length) / 5}</span>
+          <span>{Math.trunc((bricks.length + hitBricks.length) / 5)}</span>
         </p>
         <hr />
         <p className='text'>

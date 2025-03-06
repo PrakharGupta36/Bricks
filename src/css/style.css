@@ -139,7 +139,6 @@ main {
 
       span {
         font-weight: bolder;
-        font-style: italic;
         margin-left: 0.25rem;
       }
     }
@@ -147,6 +146,7 @@ main {
     a {
       font-style: italic;
       text-decoration: underline;
+      color: white;
     }
 
     .start_btn {

@@ -26,6 +26,8 @@ export default function Paddle() {
     }
   });
 
+  console.log(mousePosition.x)
+
   return (
     <RigidBody
       ref={rigidBodyRef}
@@ -36,14 +38,17 @@ export default function Paddle() {
         const ballRigidBody = e.rigidBody;
         if (!ballRigidBody) return;
 
-        // Determine impulse direction based on mouse position
-        const impulseX =
-          mousePosition.x > 0
-            ? -0.5 // Move left when x > 0
-            : 0.5; // Move right when x < 0
+        // Scale impulse based on mousePosition.x (-4 to 4)
+        let impulseX = -mousePosition.x / 4; // Range from -1 to 1
+        const minImpulse = 0.3; // Ensures at least some movement
 
-        const randomImpulse = new THREE.Vector3(impulseX, 0, 0);
-        ballRigidBody.applyImpulse(randomImpulse, true);
+        // If impulseX is too small, apply a minimum impulse in the same direction
+        if (Math.abs(impulseX) < minImpulse) {
+          impulseX = impulseX > 0 ? minImpulse : -minImpulse;
+        }
+
+        const finalImpulse = new THREE.Vector3(impulseX, 0, 0);
+        ballRigidBody.applyImpulse(finalImpulse, true);
       }}
     >
       <mesh receiveShadow castShadow>

@@ -28,6 +28,8 @@ export default function Boundary() {
 
           // Get current velocity
           const currentVelocity = ballRigidBody.linvel();
+
+
           const speed = Math.sqrt(
             currentVelocity.x ** 0.5 +
               currentVelocity.y ** 8 +
@@ -55,9 +57,9 @@ export default function Boundary() {
           // Apply new velocity
           ballRigidBody.setLinvel(newVelocity, true);
         }}
-        restitution={0.9} // Slightly reduce bounce for realism
+        restitution={0.6} // Slightly reduce bounce for realism
       >
-        <mesh position={position} rotation={rotation} receiveShadow >
+        <mesh position={position} rotation={rotation} receiveShadow>
           <planeGeometry args={[scale[0], scale[1]]} />
           <meshStandardMaterial
             color={"black"}

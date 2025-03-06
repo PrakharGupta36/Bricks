@@ -11,11 +11,43 @@ import Confetti from "react-confetti";
 import { useWindowSize } from "react-use";
 import Lights from "./Lights";
 import Brixels from "../utils/Brixels";
+import { useMemo } from "react";
 
 function GameOver() {
-  const { hitBricks, time } = useStore();
+  const {
+    hitBricks,
+    time,
+    setStart,
+    setIsTouchedFloor,
+    setTime,
+    setCountDown,
+    setBricks,
+  } = useStore();
   const { width, height } = useWindowSize();
   const btnAudio = new Audio("/btnAudio.mp3");
+
+  const initialBricks = useMemo(() => {
+    const height = 3;
+    const columns = [-4, -2, 0, 2, 4];
+    const rows = [height, height - 0.5, height - 1];
+
+    return rows.flatMap((rowHeight, rowIndex) =>
+      columns.map((x, colIndex) => ({
+        id: rowIndex * columns.length + colIndex + 1,
+        position: [x, rowHeight, 0] as [number, number, number],
+      }))
+    );
+  }, []);
+
+  function gameRestart() {
+    btnAudio.volume = 1;
+    btnAudio.play();
+    setStart(false);
+    setIsTouchedFloor(false);
+    setTime(40);
+    setCountDown(3);
+    setBricks(initialBricks);
+  }
 
   return (
     <Html center className='game_over_container'>
@@ -30,18 +62,10 @@ function GameOver() {
         <p>
           Congratulations, your score was {hitBricks.length}
           <span>
-            {" "}
             and you have wasted {40 - time} seconds of your life in this game
           </span>
         </p>
-        <button
-          className='start_btn'
-          onClick={() => {
-            btnAudio.volume = 1;
-            btnAudio.play();
-            setTimeout(() => window.location.reload(), 300); // Delay for sound effect
-          }}
-        >
+        <button className='start_btn' onClick={gameRestart}>
           Play Again
         </button>
         <a href='https://x.com/___prakhar' className='credit' target='__blank'>
